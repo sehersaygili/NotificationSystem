@@ -10,18 +10,21 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\News;
+use App\Models\User;
 
 class DailyNewsSummary
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public News $news;
+    public $news;
+    public User $user;
     /**
      * Create a new event instance.
      */
-    public function __construct(News $news)
+    public function __construct($news, User $user)
     {
         $this->news = $news;
+        $this->user = $user;
     }
 
     /**
