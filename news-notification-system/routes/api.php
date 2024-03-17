@@ -10,6 +10,9 @@ Route::get('/user', function (Request $request) {
 
 
 Route::controller(NewsController::class)->group(function () {
+    Route::get('/news','index');
     Route::get('/news/{id}', 'show');
     Route::post('/news', 'store');
+    Route::put('/news/{id}', 'update');
+    Route::delete('/news/{id}', 'delete');
 });
