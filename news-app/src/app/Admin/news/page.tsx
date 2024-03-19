@@ -1,6 +1,8 @@
 import { fetchData } from "../../api";
 import '../../globals.css';
-import { IoCreateOutline } from 'react-icons/io5';
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { LiaEdit } from "react-icons/lia";
+import { BiSolidEditAlt } from "react-icons/bi";
 import Link from 'next/link';
 
 
@@ -24,17 +26,27 @@ export default async function News() {
             <div className="sidebar">  
             <Link href="/Admin/news/create/" passHref>
         
-          <IoCreateOutline size="32px" />
+          <LiaEdit size="32px" />
         
       </Link>            </div>
             <div className="newsContainer">
                 <h1 className="newsTitle">Latest News</h1>
+                
                 <ul className="newsList">
                     {data.map((item: NewsItem, index: number) => (
                     <li key={index} className="newsItem">
-                        <span className="newsDate">
-                        {formatDate(item.created_at)}
-                        </span>
+                        
+                         <span className="newsDate">
+                                    {formatDate(item.created_at)}
+                                </span>
+                                <span className="editButton">
+                                    <Link href={`/Admin/news/edit/${item.id}`} passHref>
+                                        <BiSolidEditAlt size="20px" />
+                                    </Link>
+                                    <Link href={`/Admin/news/delete/${item.id}`} passHref>
+                                        <RiDeleteBin6Line size="20px" />
+                                    </Link>
+                                </span>
                         <div className="newsTitleText">
                         {item.title}
                         </div>
