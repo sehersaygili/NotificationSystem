@@ -1,6 +1,8 @@
 import { fetchData } from "../../api";
 import '../../globals.css';
 import { IoCreateOutline } from 'react-icons/io5';
+import Link from 'next/link';
+
 
 export default async function News() {
     const data = await fetchData('http://127.0.0.1:8000/api/news');
@@ -20,8 +22,11 @@ export default async function News() {
     return (
         <div className="appContainer">
             <div className="sidebar">  
-            <span><IoCreateOutline size="32px"></IoCreateOutline></span>
-            </div>
+            <Link href="/Admin/news/create/" passHref>
+        
+          <IoCreateOutline size="32px" />
+        
+      </Link>            </div>
             <div className="newsContainer">
                 <h1 className="newsTitle">Latest News</h1>
                 <ul className="newsList">
