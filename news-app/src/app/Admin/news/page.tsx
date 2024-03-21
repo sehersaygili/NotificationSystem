@@ -1,10 +1,11 @@
+'use client'
+
 import { fetchData } from "../../api";
 import '../../globals.css';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { LiaEdit } from "react-icons/lia";
 import { BiSolidEditAlt } from "react-icons/bi";
 import Link from 'next/link';
-
 
 export default async function News() {
     const data = await fetchData('http://127.0.0.1:8000/api/news');
@@ -20,18 +21,31 @@ export default async function News() {
         return new Date(dateString).toLocaleDateString(undefined, options);
       }
       
+      const handleDelete = async(id:any) => {
+        const response = await fetch(`http://127.0.0.1:8000/api/news/${id}`, {
+        method:'DELETE'
+    });
 
+    if (!response.ok) {
+        throw new Error('Post could not be deleted.');
+    }
+    else {
+        const text = await response.text();
+        const data = await fetchData('http://127.0.0.1:8000/api/news');
+        alert("Deleted Successfully!");
+    }
+    
+
+
+      };
     return (
-        <div className="appContainer">
-            <div className="sidebar">  
-            <Link href="/Admin/news/create/" passHref>
-        
-          <LiaEdit size="32px" />
-        
-      </Link>            </div>
             <div className="newsContainer">
                 <h1 className="newsTitle">Latest News</h1>
-                
+               <Link href="/Admin/news/create/" passHref>
+                    <LiaEdit size="32px" />
+                </Link>                    
+            <div className="appContainer">
+
                 <ul className="newsList">
                     {data.map((item: NewsItem, index: number) => (
                     <li key={index} className="newsItem">
@@ -43,9 +57,9 @@ export default async function News() {
                                     <Link href={`/Admin/news/edit/${item.id}`} passHref>
                                         <BiSolidEditAlt size="20px" />
                                     </Link>
-                                    <Link href={`/Admin/news/delete/${item.id}`} passHref>
-                                        <RiDeleteBin6Line size="20px" />
-                                    </Link>
+                                    
+                                    <button className="deleteButton" onClick={()=>handleDelete(item.id)} style={{ background: 'none', border: 'none', cursor: 'pointer' }} ><RiDeleteBin6Line size="20px" /></button>
+                                  
                                 </span>
                         <div className="newsTitleText">
                         {item.title}
@@ -57,6 +71,6 @@ export default async function News() {
                     ))}
                 </ul>   
             </div>
-        </div>
+</div>
     );
 }
