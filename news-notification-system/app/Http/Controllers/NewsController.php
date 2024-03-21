@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Models\TemporaryStorage;
 
-
-
 class NewsController
 {
     public function index() {
@@ -16,11 +14,10 @@ class NewsController
             return News::all();
         });
 
-        // Önbelleğe alınan verileri temporary_storage tablosuna kaydet
         foreach ($newsItems as $newsItem) {
             TemporaryStorage::updateOrCreate(
                 ['news_id' => $newsItem->id],
-                ['expiration_time' => now()->addMinutes(10)] // Önbellek süresine uygun olarak ayarlayabilirsiniz
+                ['expiration_time' => now()->addMinutes(10)] 
             );
         }
 
@@ -32,14 +29,13 @@ class NewsController
         $news->title = $request->title;
         $news->content = $request->content;
         $news->created_at = $request->has('created_at') ? $request->created_at : now();
-        $news->published_at = $request->has('published_at') ? $request->published_at : null;
         $news->save();
         
         event(new NewsCreated($news));
 
         TemporaryStorage::create([
             'news_id' => $news->id,
-            'expiration_time' => now()->addMinutes(10) // Önbellek süresine uygun olarak ayarlayabilirsiniz
+            'expiration_time' => now()
         ]);
 
         return response()->json(['message' => 'Haber başarıyla eklendi'], 201);
@@ -52,8 +48,18 @@ class NewsController
         $news = News::findOrFail($id);
         $news->delete();
 
-        // Haber silindiğinde temporary_storage tablosundan da sil
-        TemporaryStorage::where('news_id', $id)->delete();
-
+-        TemporaryStorage::where('news_id', $id)->delete();
     }
+    public function update(Request $request, $id) {
+        $news = News::findOrFail($id);
+        $news->title = $request->input('title', $news->title); 
+        $news->content = $request->input('content', $news->content); 
+        if ($request->has('created_at')) {
+            $news->created_at = $request->input('created_at');
+        }
+        $news->save(); 
+    
+        return response()->json(['message' => 'Haber başarıyla güncellendi', 'news' => $news], 200);
+    }
+    
 }
